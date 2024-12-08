@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"No test specified, skipping\"",
     "build": "npx tsc",
-    "lint": "npx eslint --fix .",
+    "lint": "npx eslint .",
     "prepare": "husky install",
     "local-test": "node dist/index.js"
   },

@@ -24,7 +24,6 @@ const invokeGitLog = async (targetBranch: string, outputPattern: string) => {
     }
     throw new Error(errorMessage);
   }
-  //TODO: do stuff with it
   return commandResult.stdout;
 };
 
