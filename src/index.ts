@@ -1,8 +1,8 @@
-import { getGitLog } from "./git-parser";
+import { getFullGitLog } from "./git-parser";
 
 const main = async () => {
     try {
-        const gitLogInfo = await getGitLog('develop');
+        const gitLogInfo = await getFullGitLog('develop');
         console.log(JSON.stringify(gitLogInfo));
     }
     catch(error : any) {
