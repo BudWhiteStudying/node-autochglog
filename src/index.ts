@@ -5,6 +5,11 @@ const main = async () => {
     try {
         const gitLogInfo = await getFullGitLog('develop');
         console.log(JSON.stringify(gitLogInfo, null, 4));
+
+
+
+
+        
     }
     catch(error : any) {
         console.warn('caught..?')
