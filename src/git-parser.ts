@@ -1,7 +1,7 @@
 import util from 'node:util';
-const exec = util.promisify(require('child_process').exec);
+import { FALLBACK_ERROR_MESSAGE } from './messages';
 
-const FALLBACK_ERROR_MESSAGE = 'No further info available';
+const exec = util.promisify(require('child_process').exec);
 
 const COMMIT_IDS_PATTERN = '%C(auto)%h';
 const COMMIT_DATES_PATTERN = '%cs';
