@@ -1,10 +1,11 @@
 import { getGitLogInfo } from './logic/git-parser';
+import { organizeCommitsByCategory } from './logic/util';
 import { FALLBACK_ERROR_MESSAGE } from './messages';
 
 const main = async () => {
   try {
     const gitLogInfo = await getGitLogInfo('develop');
-    console.log(JSON.stringify(gitLogInfo, null, 4));
+    console.log(JSON.stringify(organizeCommitsByCategory(gitLogInfo), null, 4));
   } catch (error) {
     try {
       const parsedError = error as { message: string };
