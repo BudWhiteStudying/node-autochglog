@@ -1,9 +1,9 @@
-import { getFullGitLog } from './git-parser';
+import { getGitLogInfo } from './logic/git-parser';
 import { FALLBACK_ERROR_MESSAGE } from './messages';
 
 const main = async () => {
   try {
-    const gitLogInfo = await getFullGitLog('develop');
+    const gitLogInfo = await getGitLogInfo('develop');
     console.log(JSON.stringify(gitLogInfo, null, 4));
   } catch (error: any) {
     console.warn('caught..?');

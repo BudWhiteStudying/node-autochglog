@@ -7,7 +7,8 @@
     "test": "echo \"No test specified, skipping\"",
     "build": "npx tsc",
     "lint": "npx eslint .",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "local-test": "node dist/index.js"
   },
   "husky": {
     "hooks": {
