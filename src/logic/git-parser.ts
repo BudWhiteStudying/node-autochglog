@@ -1,8 +1,9 @@
 import util from 'node:util';
 import { FALLBACK_ERROR_MESSAGE } from '../messages';
 import { Commit } from '../model/Commit';
+import childProcess from 'child_process';
 
-const exec = util.promisify(require('child_process').exec);
+const exec = util.promisify(childProcess.exec);
 
 const COMMIT_IDS_PATTERN = '%C(auto)%h';
 const COMMIT_DATES_PATTERN = '%cs';
@@ -14,9 +15,13 @@ const invokeGitLog = async (targetBranch: string, outputPattern: string) => {
     commandResult = await exec(
       `git log --oneline --no-merges --pretty=format:'${outputPattern}' ${targetBranch}`
     );
-  } catch (error: any) {
-    const errorMessage =
-      (error?.message as string) || error.toString() || FALLBACK_ERROR_MESSAGE;
+  } catch (error: unknown) {
+    let errorMessage;
+    if (typeof error == 'string') {
+      errorMessage = error;
+    } else if (error instanceof Error) {
+      errorMessage = error.message || FALLBACK_ERROR_MESSAGE;
+    }
     throw new Error(errorMessage);
   }
   //TODO: do stuff with it
