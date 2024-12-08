@@ -2,7 +2,7 @@
   "name": "node-autochglog",
   "version": "1.0.0",
   "description": "Yet another git changelog generator, for Node.",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
