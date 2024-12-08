@@ -1,3 +1,3 @@
 module.exports = {
-  extends: ['@commitlint/config-conventional', 'plugin:prettier/recommended']
+  extends: ['@commitlint/config-conventional']
 };
