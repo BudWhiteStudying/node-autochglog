@@ -2,7 +2,8 @@ import { getGitLog } from "./git-parser";
 
 const main = async () => {
     try {
-        await getGitLog('develop');
+        const gitLogInfo = await getGitLog('develop');
+        console.log(JSON.stringify(gitLogInfo));
     }
     catch(error : any) {
         console.warn('caught..?')
