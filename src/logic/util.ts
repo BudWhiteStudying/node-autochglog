@@ -67,12 +67,20 @@ export const buildChangelogMetadata = (
     releases: Object.entries(commitsByTagsAndCategories)
       .map(([releaseName, categoriesMap]) => ({
         name: releaseName,
-        categories: Object.entries(categoriesMap).map(
-          ([categoryName, commits]) => ({
-            name: categoryName,
+        categories: Object.entries(categoriesMap)
+          .map(([categoryKey, commits]) => ({
+            key: categoryKey,
+            name:
+              defaultConfig.allowedCategories.find(
+                (category) => category.key === categoryKey
+              )?.label || categoryKey,
             commits: commits
-          })
-        ),
+          }))
+          .filter((category) =>
+            defaultConfig.allowedCategories
+              .map((allowed) => allowed.key)
+              .includes(category.key)
+          ),
         date:
           Object.values(categoriesMap)
             .map((commits) =>

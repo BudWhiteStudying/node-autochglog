@@ -55,7 +55,10 @@ export const getGitLogInfo = async (targetBranch: string) => {
     response.push({
       id: commitIds[i],
       date: new Date(commitDates[i]),
-      message: commitMessages[i],
+      message: commitMessages[i]
+        .matchAll(/.*:(.*)/g)
+        .next()
+        .value![1].trim(),
       category: commitMessages[i].matchAll(/(.*):/g).next().value![1],
       decorations: commitDecorations[i]
         ? commitDecorations[i]

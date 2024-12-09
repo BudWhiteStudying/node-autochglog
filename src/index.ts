@@ -1,3 +1,4 @@
+import { defaultConfig } from './config/NodeAutochglogConfig';
 import { getGitLogInfo } from './logic/git-parser';
 import {
   buildChangelogMetadata,
@@ -10,10 +11,11 @@ import Mustache from 'mustache';
 
 const main = async () => {
   try {
-    const gitLogInfo = await getGitLogInfo('develop');
-    console.log(
+    const gitLogInfo = await getGitLogInfo(defaultConfig.targetBranch);
+    fs.writeFileSync(
+      defaultConfig.outputFilepath,
       Mustache.render(
-        fs.readFileSync('src/config/DEFAULT_TEMPLATE.mustache', 'utf-8'),
+        fs.readFileSync(defaultConfig.templateLocation, 'utf-8'),
         buildChangelogMetadata(organizeCommitsByTagsAndCategories(gitLogInfo))
       )
     );
