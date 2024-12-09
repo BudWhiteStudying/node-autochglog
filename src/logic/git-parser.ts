@@ -62,7 +62,13 @@ export const getGitLogInfo = async (targetBranch: string) => {
             .matchAll(/\((.*)\)/g)
             .next()
             .value![1].split(',')
-            .map((decoration) => decoration.trim())
+            .filter((decoration) => decoration.includes('tag: '))
+            .map((decoration) =>
+              decoration
+                .matchAll(/tag: (.*)/g)
+                .next()
+                .value![1].trim()
+            )
         : []
     });
   });
