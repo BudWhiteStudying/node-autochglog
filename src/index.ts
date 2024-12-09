@@ -1,15 +1,12 @@
 import { getGitLogInfo } from './logic/git-parser';
-import { organizeCommitsByCategory, organizeCommitsByTags } from './logic/util';
+import { organizeCommitsByTagsAndCategories } from './logic/util';
 import { FALLBACK_ERROR_MESSAGE } from './messages';
 
 const main = async () => {
   try {
     const gitLogInfo = await getGitLogInfo('develop');
     console.log(
-      `By category:\n${JSON.stringify(organizeCommitsByCategory(gitLogInfo), null, 4)}`
-    );
-    console.log(
-      `By tag:\n${JSON.stringify(organizeCommitsByTags(gitLogInfo), null, 4)}`
+      JSON.stringify(organizeCommitsByTagsAndCategories(gitLogInfo), null, 4)
     );
   } catch (error) {
     try {

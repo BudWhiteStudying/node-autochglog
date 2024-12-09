@@ -16,32 +16,45 @@ export const organizeCommitsByCategory = (
 export const organizeCommitsByTags = (
   commits: Commit[]
 ): Record<string, Commit[]> => {
-  const allDecorations = commits
-    .reduce((acc, commit) => {
-      for (let d of commit.decorations) {
-        if (!acc.includes(d)) {
-          acc.push(d);
-        }
-      }
-      return acc;
-    }, [] as string[])
-    .filter((decoration) =>
-      new RegExp(defaultConfig.tagFilter).test(decoration)
-    );
+  const commitByTagsMap: Record<string, Commit[]> = {};
+  commits.sort((a, b) => {
+    return new Date(b.date) > new Date(a.date) ? -1 : +1;
+  });
 
-  return allDecorations.length > 0
-    ? allDecorations.reduce(
-        (acc, decoration) => {
-          (acc[decoration] ||= []).push(
-            ...commits.filter((commit) =>
-              commit.decorations.includes(decoration)
-            )
-          );
-          return acc;
-        },
-        {} as Record<string, Commit[]>
-      )
-    : {
-        [defaultConfig.initialTag]: commits
-      };
+  let buffer: Commit[] = [];
+  for (const commit of commits) {
+    buffer.push(commit);
+    const relevantTags = commit.decorations.filter((d) =>
+      new RegExp(defaultConfig.tagFilter).test(d)
+    );
+    if (relevantTags.length > 0) {
+      for (const tag of relevantTags) {
+        (commitByTagsMap[tag] ||= []).push(...buffer);
+      }
+      buffer = [];
+    }
+  }
+
+  if (buffer.length > 0) {
+    commitByTagsMap[defaultConfig.initialTag] = buffer;
+  }
+
+  return commitByTagsMap;
+};
+
+export const organizeCommitsByTagsAndCategories = (
+  commits: Commit[]
+): Record<string, Record<string, Commit[]>> => {
+  const commitsByTagsAndCategories: Record<
+    string,
+    Record<string, Commit[]>
+  > = {};
+  const commitsByTags = organizeCommitsByTags(commits);
+  for (const tag in commitsByTags) {
+    commitsByTagsAndCategories[tag] = organizeCommitsByCategory(
+      commitsByTags[tag]
+    );
+  }
+
+  return commitsByTagsAndCategories;
 };

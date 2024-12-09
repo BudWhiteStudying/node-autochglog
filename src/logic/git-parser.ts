@@ -6,7 +6,7 @@ import childProcess from 'child_process';
 const exec = util.promisify(childProcess.exec);
 
 const COMMIT_IDS_PATTERN = '%C(auto)%h';
-const COMMIT_DATES_PATTERN = '%cs';
+const COMMIT_DATES_PATTERN = '%ci';
 const COMMIT_MESSAGES_PATTERN = '%s';
 const COMMIT_DECORATIONS_PATTERN = '%d';
 
