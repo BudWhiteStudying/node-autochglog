@@ -8,6 +8,7 @@ const exec = util.promisify(childProcess.exec);
 const COMMIT_IDS_PATTERN = '%C(auto)%h';
 const COMMIT_DATES_PATTERN = '%cs';
 const COMMIT_MESSAGES_PATTERN = '%s';
+const COMMIT_DECORATIONS_PATTERN = '%d';
 
 const invokeGitLog = async (targetBranch: string, outputPattern: string) => {
   let commandResult: { stdout: string; stderr: string };
@@ -36,11 +37,17 @@ const getCommitDates = async (targetBranch: string) => {
 const getCommitMessages = async (targetBranch: string) => {
   return await invokeGitLog(targetBranch, COMMIT_MESSAGES_PATTERN);
 };
+const getCommitDecorations = async (targetBranch: string) => {
+  return await invokeGitLog(targetBranch, COMMIT_DECORATIONS_PATTERN);
+};
 
 export const getGitLogInfo = async (targetBranch: string) => {
   const commitIds = (await getCommitIds(targetBranch)).split('\n');
   const commitDates = (await getCommitDates(targetBranch)).split('\n');
   const commitMessages = (await getCommitMessages(targetBranch)).split('\n');
+  const commitDecorations = (await getCommitDecorations(targetBranch)).split(
+    '\n'
+  );
 
   const response: Commit[] = [];
 
@@ -49,7 +56,14 @@ export const getGitLogInfo = async (targetBranch: string) => {
       id: commitIds[i],
       date: commitDates[i],
       message: commitMessages[i],
-      category: commitMessages[i].matchAll(/(.*):/g).next().value![1]
+      category: commitMessages[i].matchAll(/(.*):/g).next().value![1],
+      decorations: commitDecorations[i]
+        ? commitDecorations[i]
+            .matchAll(/\((.*)\)/g)
+            .next()
+            .value![1].split(',')
+            .map((decoration) => decoration.trim())
+        : []
     });
   });
 
