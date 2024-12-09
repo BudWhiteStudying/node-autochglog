@@ -1,6 +1,6 @@
 export interface Commit {
   id: string;
-  date: string;
+  date: Date;
   message: string;
   category: string;
   decorations: string[];

@@ -54,7 +54,7 @@ export const getGitLogInfo = async (targetBranch: string) => {
   Array.from({ length: commitIds.length }).forEach((_, i) => {
     response.push({
       id: commitIds[i],
-      date: commitDates[i],
+      date: new Date(commitDates[i]),
       message: commitMessages[i],
       category: commitMessages[i].matchAll(/(.*):/g).next().value![1],
       decorations: commitDecorations[i]

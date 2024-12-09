@@ -1,12 +1,21 @@
 import { getGitLogInfo } from './logic/git-parser';
-import { organizeCommitsByTagsAndCategories } from './logic/util';
+import {
+  buildChangelogMetadata,
+  organizeCommitsByTagsAndCategories
+} from './logic/util';
 import { FALLBACK_ERROR_MESSAGE } from './messages';
+
+import fs from 'fs';
+import Mustache from 'mustache';
 
 const main = async () => {
   try {
     const gitLogInfo = await getGitLogInfo('develop');
     console.log(
-      JSON.stringify(organizeCommitsByTagsAndCategories(gitLogInfo), null, 4)
+      Mustache.render(
+        fs.readFileSync('src/config/DEFAULT_TEMPLATE.mustache', 'utf-8'),
+        buildChangelogMetadata(organizeCommitsByTagsAndCategories(gitLogInfo))
+      )
     );
   } catch (error) {
     try {

@@ -1,4 +1,5 @@
 import { defaultConfig } from '../config/NodeAutochglogConfig';
+import { Changelog } from '../model/Changelog';
 import { Commit } from '../model/Commit';
 
 export const organizeCommitsByCategory = (
@@ -18,7 +19,7 @@ export const organizeCommitsByTags = (
 ): Record<string, Commit[]> => {
   const commitByTagsMap: Record<string, Commit[]> = {};
   commits.sort((a, b) => {
-    return new Date(b.date) > new Date(a.date) ? -1 : +1;
+    return b.date > a.date ? -1 : +1;
   });
 
   let buffer: Commit[] = [];
@@ -57,4 +58,28 @@ export const organizeCommitsByTagsAndCategories = (
   }
 
   return commitsByTagsAndCategories;
+};
+
+export const buildChangelogMetadata = (
+  commitsByTagsAndCategories: Record<string, Record<string, Commit[]>>
+): Changelog => {
+  return {
+    releases: Object.entries(commitsByTagsAndCategories)
+      .map(([releaseName, categoriesMap]) => ({
+        name: releaseName,
+        categories: Object.entries(categoriesMap).map(
+          ([categoryName, commits]) => ({
+            name: categoryName,
+            commits: commits
+          })
+        ),
+        date:
+          Object.values(categoriesMap)
+            .map((commits) =>
+              commits.filter((c) => c.decorations.includes(releaseName))
+            )
+            .flat(1)[0]?.date || new Date()
+      }))
+      .sort((rel1, rel2) => (rel1.date > rel2.date ? -1 : +1))
+  };
 };
