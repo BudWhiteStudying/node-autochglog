@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { defaultConfig } from './config/NodeAutochglogConfig';
 import { getGitLogInfo } from './logic/git-parser';
 import {
@@ -27,6 +29,7 @@ const main = async () => {
       console.warn(`Could not parse error: ${parsingError}`);
       console.error(JSON.stringify(error) || FALLBACK_ERROR_MESSAGE);
     }
+    throw error;
   }
 };
 

@@ -16,6 +16,7 @@ const invokeGitLog = async (targetBranch: string, outputPattern: string) => {
     commandResult = await exec(
       `git log --oneline --no-merges --pretty=format:'${outputPattern}' ${targetBranch}`
     );
+    //console.debug(`Git log command result: ${commandResult.stdout}`)
   } catch (error: unknown) {
     let errorMessage;
     if (typeof error == 'string') {
@@ -52,29 +53,30 @@ export const getGitLogInfo = async (targetBranch: string) => {
   const response: Commit[] = [];
 
   Array.from({ length: commitIds.length }).forEach((_, i) => {
-    response.push({
-      id: commitIds[i],
-      date: new Date(commitDates[i]),
-      message: commitMessages[i]
-        .matchAll(/.*:(.*)/g)
-        .next()
-        .value![1].trim(),
-      category: commitMessages[i].matchAll(/(.*):/g).next().value![1],
-      decorations: commitDecorations[i]
-        ? commitDecorations[i]
-            .matchAll(/\((.*)\)/g)
-            .next()
-            .value![1].split(',')
-            .filter((decoration) => decoration.includes('tag: '))
-            .map((decoration) =>
-              decoration
-                .matchAll(/tag: (.*)/g)
-                .next()
-                .value![1].trim()
-            )
-        : []
-    });
+    if (new RegExp('.*: .*').test(commitMessages[i])) {
+      response.push({
+        id: commitIds[i],
+        date: new Date(commitDates[i]),
+        message: commitMessages[i]
+          .matchAll(/.*:(.*)/g)
+          .next()
+          .value![1].trim(),
+        category: commitMessages[i].matchAll(/(.*):/g).next().value![1],
+        decorations: commitDecorations[i]
+          ? commitDecorations[i]
+              .matchAll(/\((.*)\)/g)
+              .next()
+              .value![1].split(',')
+              .filter((decoration) => decoration.includes('tag: '))
+              .map((decoration) =>
+                decoration
+                  .matchAll(/tag: (.*)/g)
+                  .next()
+                  .value![1].trim()
+              )
+          : []
+      });
+    }
   });
-
   return response;
 };
