@@ -2,6 +2,18 @@
 
 > `node-autochglog` is a CLI tool that generates a changelog based on commit messages, assuming that they're written using the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) syntax. It is meant to be used in CI/CD pipelines, or in pre-commit hooks.
 
+## Data model
+
+Here are some concepts to better understand the logic behind the tool:
+
+- to the purpose of this tool, a `Changelog` is a list of `Release` items;
+- each `Release` item contains a list of `Category` items;
+- each `Category` item contains a list of `Commit items`.
+
+In other words, a _changelog_ is a list of _releases_, each _release_ contains a number of _commits_, that are arranged in _categories_ within the _release_ they belong to.
+
+_Releases_ are defined by git tags, _categories_ are defined by Conventional Commit prefixes of _commit_ messages.
+
 ## Installation
 
 For making it available within a project:
