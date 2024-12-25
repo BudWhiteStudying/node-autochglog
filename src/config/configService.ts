@@ -40,7 +40,7 @@ const defaultConfig: NodeAutoChglogConfig = {
   tagFilter:
     '^\\d+\\.\\d+\\.\\d+(?:-[\\da-zA-Z\\-\\.]+)?(?:\\+[\\da-zA-Z\\-\\.]+)?$',
   initialTag: 'Unreleased',
-  templateLocation: join(__dirname, 'DEFAULT_TEMPLATE.mustache'),
+  templateLocation: '',
   targetBranch: 'develop',
   outputFilepath: join('CHANGELOG.md'),
   allowedCategories: [
