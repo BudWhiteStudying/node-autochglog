@@ -91,22 +91,22 @@ export interface NodeAutoChglogConfig {
     <td>List of key/label objects defining which commit prefixes (<code>key</code>) shall be considered as valid categories and which labels (<code>label</code>) shall be used in order to represent them; the <code>label</code> property is optional, if absent the <code>key</code> property will be used in its place.</td>
     <td>
       <pre lang="json">
-        {
-          "key": "feat",
-          "label": "Features"
-          },
-          {
-            "key": "refactor",
-            "label": "Refactoring"
-          },
-          {
-            "key": "chore",
-            "label": "Chores"
-          },
-          {
-            "key": "fix",
-            "label": "Fixes"
-          }
+{
+  "key": "feat",
+  "label": "Features"
+},
+{
+  "key": "refactor",
+  "label": "Refactoring"
+},
+{
+  "key": "chore",
+  "label": "Chores"
+},
+{
+  "key": "fix",
+  "label": "Fixes"
+}
       </pre>
     </td>
   </tr>
