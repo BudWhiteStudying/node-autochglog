@@ -55,8 +55,5 @@
     "dist/",
     "README.md",
     "LICENSE.md"
-  ],
-  "publishConfig": {
-    "registry": "http://localhost:4873"
-  }
+  ]
 }
