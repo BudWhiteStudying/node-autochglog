@@ -64,7 +64,7 @@ export interface NodeAutoChglogConfig {
   <tr>
     <td><code>tagFilter</code></td>
     <td>RegEx used for determining which tags are considered as versions; tags not matching the RegEx will be ignored</td>
-    <td><pre>^\\d+\\.\\d+\\.\\d+(?:-[\\da-zA-Z\\-\\.]+)?(?:\\+[\\da-zA-Z\\-\\.]+)?$</pre> (SemVer)</td>
+    <td><a href='https://semver.org/'>SemVer</a></td>
   </tr>
   <tr>
     <td><code>initialTag</code></td>
