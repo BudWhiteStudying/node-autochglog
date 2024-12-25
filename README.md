@@ -89,6 +89,6 @@ export interface NodeAutoChglogConfig {
   <tr>
     <td><code>allowedCategories</code></td>
     <td>List of key/label objects defining which commit prefixes (<code>key</code>) shall be considered as valid categories and which labels (<code>label</code>) shall be used in order to represent them; the <code>label</code> property is optional, if absent the <code>key</code> property will be used in its place.</td>
-    <td><pre lang="json">{<br/>  key: 'feat',<br/>  label: 'Features'<br/>},<br/>{<br/>  key: 'refactor',<br/>  label: 'Refactoring'<br/>},<br/>{<br/>  key: 'chore',<br/>  label: 'Chores'<br/>},<br/>{<br/>  key: 'fix',<br/>  label: 'Fixes'<br/>}</pre></td>
+    <td><pre lang="json">{<br/>  "key": "feat",<br/>  "label": "Features"<br/>},<br/>{<br/>  "key": "refactor",<br/>  "label": "Refactoring"<br/>},<br/>{<br/>  "key": "chore",<br/>  "label": "Chores"<br/>},<br/>{<br/>  "key": "fix",<br/>  "label": "Fixes"<br/>}</pre></td>
   </tr>
 </table>
