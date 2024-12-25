@@ -1,0 +1,13 @@
+# Node modules
+node_modules
+
+# Build artifacts
+dist
+build
+target
+**/*.md
+!LICENSE.md
+
+# OS files
+.DS_Store
+~$*
