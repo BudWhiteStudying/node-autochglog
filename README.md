@@ -42,7 +42,7 @@ node-autochglog
 
 ## Configuration
 
-The tool doesn't currently accept any configuration, but it _will_ accept it from a `node-autochglog.config.ts` file exporting an object of type [NodeAutoChglogConfig](./src/config/NodeAutochglogConfig.ts):
+The tool accepts configuration from a `node-autochglog.config.json`, expected to be found in the directory where the `node-autochglog` command is executed; the file is expected to contain a single JSON object adhering to the [NodeAutoChglogConfig](./src/config/NodeAutochglogConfig.ts) interface:
 
 ```typescript
 export interface NodeAutoChglogConfig {
@@ -55,11 +55,59 @@ export interface NodeAutoChglogConfig {
 }
 ```
 
-| **Config key** | **Purpose** | **Default** |
-|----------------|-------------|-------------|
-| `tagFilter`    | RegEx used for determining which tags are considered as versions; tags not matching the regEx will be ignored | `^\\d+\\.\\d+\\.\\d+(?:-[\\da-zA-Z\\-\\.]+)?(?:\\+[\\da-zA-Z\\-\\.]+)?$` (SemVer) |
-| `initialTag`   | Fallback "tag" to be used when no tags exist, or for recent commits that do not (yet) fall under a version tag | `Unrelesaed` |
-| `templateLocation` | Path to the [Mustache]() template to be used for the changelog; **whatever custom template you provide, it will have to work with the metadata provided by the tool, represented by the [`Changelog`](./src/model/Changelog.ts) interface** | [`DEFAULT_TEMPLATE.mustache`](./src/config/DEFAULT_TEMPLATE.mustache) |
-| `targetBranch` | Branch from which the commits shall be read for composing the changelog | `develop` |
-| `outputFilepath` | Path where the generated changelog shall be written | Project root |
-| `allowedCategories` | List of key/label objects defining which commit prefixes (`key`) shall be considered as valid categories and which labels (`label`) shall be used in order to represent them; the `label` property is optional, if absent the `key` property will be used in its place. | <pre lang="json">{<br/>  `key: 'feat',<br/>  label: 'Features'<br/>},<br/>{<br/>  key: 'refactor',<br/>  label: 'Refactoring'<br/>},<br/>{<br/>  key: 'chore',<br/>  label: 'Chores'<br/>},<br/>{<br/>  key: 'fix',<br/>  label: 'Fixes'<br/>}</pre> |
+<table>
+  <tr>
+    <th>Config key</th>
+    <th>Purpose</th>
+    <th>Default</th>
+  </tr>
+  <tr>
+    <td><code>tagFilter</code></td>
+    <td>RegEx used for determining which tags are considered as versions; tags not matching the RegEx will be ignored</td>
+    <td><a href='https://semver.org/'>SemVer</a></td>
+  </tr>
+  <tr>
+    <td><code>initialTag</code></td>
+    <td>Fallback "tag" to be used as release name when no tags exist yet, or for recent commits that do not (yet) fall under a version tag</td>
+    <td><code>Unreleased</code></td>
+  </tr>
+  <tr>
+    <td><code>templateLocation</code></td>
+    <td>Path to the <a href='https://mustache.github.io/'>Mustache</a> template to be used for the changelog; <b>whatever custom template you provide, it will have to work with the metadata provided by the tool, represented by the <a href='./src/model/Changelog.ts'><code>Changelog</code></a> interface</b></td>
+    <td><a href='./src/config/DEFAULT_TEMPLATE.mustache'>DEFAULT_TEMPLATE.mustache</a></td>
+  </tr>
+  <tr>
+    <td><code>targetBranch</code></td>
+    <td>Branch from which the commits shall be read for composing the changelog</td>
+    <td><code>develop</code></td>
+  </tr>
+  <tr>
+    <td><code>outputFilepath</code></td>
+    <td>Path where the generated changelog shall be written</td>
+    <td>Project root</td>
+  </tr>
+  <tr>
+    <td><code>allowedCategories</code></td>
+    <td>List of key/label objects defining which commit prefixes (<code>key</code>) shall be considered as valid categories and which labels (<code>label</code>) shall be used in order to represent them; the <code>label</code> property is optional, if absent the <code>key</code> property will be used in its place.</td>
+    <td>
+      <pre lang="json">
+{
+  "key": "feat",
+  "label": "Features"
+},
+{
+  "key": "refactor",
+  "label": "Refactoring"
+},
+{
+  "key": "chore",
+  "label": "Chores"
+},
+{
+  "key": "fix",
+  "label": "Fixes"
+}
+      </pre>
+    </td>
+  </tr>
+</table>

@@ -9,6 +9,15 @@ export interface NodeAutoChglogConfig {
   allowedCategories: { key: string; label?: string }[];
 }
 
+export interface CustomNodeAutoChglogConfig {
+  tagFilter?: string;
+  initialTag?: string;
+  templateLocation?: string;
+  targetBranch?: string;
+  outputFilepath?: string;
+  allowedCategories?: { key: string; label?: string }[];
+}
+
 export const defaultConfig: NodeAutoChglogConfig = {
   tagFilter:
     '^\\d+\\.\\d+\\.\\d+(?:-[\\da-zA-Z\\-\\.]+)?(?:\\+[\\da-zA-Z\\-\\.]+)?$',

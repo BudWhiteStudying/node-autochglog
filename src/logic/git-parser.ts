@@ -2,8 +2,8 @@ import util from 'node:util';
 import { FALLBACK_ERROR_MESSAGE } from '../messages';
 import childProcess from 'child_process';
 import { GitLogInfo } from '../model/GitLogInfo';
-import { defaultConfig } from '../config/NodeAutochglogConfig';
 import { Tag } from '../model/Tag';
+import { NodeAutoChglogConfig } from '../config/NodeAutochglogConfig';
 
 const exec = util.promisify(childProcess.exec);
 
@@ -62,15 +62,21 @@ const getCommitDecorations = async (
   );
 };
 
-export const getGitLogInfo = async (targetBranch: string) => {
-  const commitIds = (await getCommitIds(targetBranch)).split('\n');
-  const commitDates = (await getCommitDates(targetBranch, true)).split('\n');
-  const commitMessages = (await getCommitMessages(targetBranch)).split('\n');
-
-  const tagDates = (await getCommitDates(targetBranch, false)).split('\n');
-  const tagNames = (await getCommitDecorations(targetBranch, false)).split(
+export const getGitLogInfo = async (config: NodeAutoChglogConfig) => {
+  const commitIds = (await getCommitIds(config.targetBranch)).split('\n');
+  const commitDates = (await getCommitDates(config.targetBranch, true)).split(
     '\n'
   );
+  const commitMessages = (await getCommitMessages(config.targetBranch)).split(
+    '\n'
+  );
+
+  const tagDates = (await getCommitDates(config.targetBranch, false)).split(
+    '\n'
+  );
+  const tagNames = (
+    await getCommitDecorations(config.targetBranch, false)
+  ).split('\n');
 
   const originalTags: Tag[] = tagNames.map((_, index) => ({
     name: tagNames[index],
@@ -90,7 +96,7 @@ export const getGitLogInfo = async (targetBranch: string) => {
         .next().value![1],
       date: rawTag.date
     }))
-    .filter((tag) => new RegExp(defaultConfig.tagFilter).test(tag.name));
+    .filter((tag) => new RegExp(config.tagFilter).test(tag.name));
 
   const response: GitLogInfo = {
     commits: [],

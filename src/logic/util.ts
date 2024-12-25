@@ -1,4 +1,4 @@
-import { defaultConfig } from '../config/NodeAutochglogConfig';
+import { NodeAutoChglogConfig } from '../config/NodeAutochglogConfig';
 import { Changelog } from '../model/Changelog';
 import { Commit } from '../model/Commit';
 import { GitLogInfo } from '../model/GitLogInfo';
@@ -17,7 +17,8 @@ export const organizeCommitsByCategory = (
 };
 
 export const organizeCommitsByTags = (
-  gitLogInfo: GitLogInfo
+  gitLogInfo: GitLogInfo,
+  config: NodeAutoChglogConfig
 ): Record<string, Commit[]> => {
   const commitByTagsMap: Record<string, Commit[]> = {};
   gitLogInfo.commits.sort((a, b) => {
@@ -45,20 +46,21 @@ export const organizeCommitsByTags = (
   }
 
   if (buffer.length > 0) {
-    commitByTagsMap[defaultConfig.initialTag] = buffer;
+    commitByTagsMap[config.initialTag] = buffer;
   }
 
   return commitByTagsMap;
 };
 
 export const organizeCommitsByTagsAndCategories = (
-  gitLogInfo: GitLogInfo
+  gitLogInfo: GitLogInfo,
+  config: NodeAutoChglogConfig
 ): Record<string, Record<string, Commit[]>> => {
   const commitsByTagsAndCategories: Record<
     string,
     Record<string, Commit[]>
   > = {};
-  const commitsByTags = organizeCommitsByTags(gitLogInfo);
+  const commitsByTags = organizeCommitsByTags(gitLogInfo, config);
   for (const tag in commitsByTags) {
     commitsByTagsAndCategories[tag] = organizeCommitsByCategory(
       commitsByTags[tag]
@@ -70,7 +72,8 @@ export const organizeCommitsByTagsAndCategories = (
 
 export const buildChangelogMetadata = (
   commitsByTagsAndCategories: Record<string, Record<string, Commit[]>>,
-  tags: Tag[]
+  tags: Tag[],
+  config: NodeAutoChglogConfig
 ): Changelog => {
   return {
     releases: Object.entries(commitsByTagsAndCategories)
@@ -80,13 +83,13 @@ export const buildChangelogMetadata = (
           .map(([categoryKey, commits]) => ({
             key: categoryKey,
             name:
-              defaultConfig.allowedCategories.find(
+              config.allowedCategories.find(
                 (category) => category.key === categoryKey
               )?.label || categoryKey,
             commits: commits
           }))
           .filter((category) =>
-            defaultConfig.allowedCategories
+            config.allowedCategories
               .map((allowed) => allowed.key)
               .includes(category.key)
           ),
