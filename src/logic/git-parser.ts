@@ -1,7 +1,9 @@
 import util from 'node:util';
 import { FALLBACK_ERROR_MESSAGE } from '../messages';
-import { Commit } from '../model/Commit';
 import childProcess from 'child_process';
+import { GitLogInfo } from '../model/GitLogInfo';
+import { defaultConfig } from '../config/NodeAutochglogConfig';
+import { Tag } from '../model/Tag';
 
 const exec = util.promisify(childProcess.exec);
 
@@ -10,11 +12,15 @@ const COMMIT_DATES_PATTERN = '%ci';
 const COMMIT_MESSAGES_PATTERN = '%s';
 const COMMIT_DECORATIONS_PATTERN = '%d';
 
-const invokeGitLog = async (targetBranch: string, outputPattern: string) => {
+const invokeGitLog = async (
+  targetBranch: string,
+  outputPattern: string,
+  excludeMergeCommits: boolean
+) => {
   let commandResult: { stdout: string; stderr: string };
   try {
     commandResult = await exec(
-      `git log --oneline --no-merges --pretty=format:'${outputPattern}' ${targetBranch}`
+      `git log --oneline ${excludeMergeCommits ? '--no-merges' : ''} --pretty=format:'${outputPattern}' ${targetBranch}`
     );
     //console.debug(`Git log command result: ${commandResult.stdout}`)
   } catch (error: unknown) {
@@ -30,51 +36,77 @@ const invokeGitLog = async (targetBranch: string, outputPattern: string) => {
 };
 
 const getCommitIds = async (targetBranch: string) => {
-  return await invokeGitLog(targetBranch, COMMIT_IDS_PATTERN);
+  return await invokeGitLog(targetBranch, COMMIT_IDS_PATTERN, true);
 };
-const getCommitDates = async (targetBranch: string) => {
-  return await invokeGitLog(targetBranch, COMMIT_DATES_PATTERN);
+const getCommitDates = async (
+  targetBranch: string,
+  excludeMergeCommits: boolean
+) => {
+  return await invokeGitLog(
+    targetBranch,
+    COMMIT_DATES_PATTERN,
+    excludeMergeCommits
+  );
 };
 const getCommitMessages = async (targetBranch: string) => {
-  return await invokeGitLog(targetBranch, COMMIT_MESSAGES_PATTERN);
+  return await invokeGitLog(targetBranch, COMMIT_MESSAGES_PATTERN, true);
 };
-const getCommitDecorations = async (targetBranch: string) => {
-  return await invokeGitLog(targetBranch, COMMIT_DECORATIONS_PATTERN);
+const getCommitDecorations = async (
+  targetBranch: string,
+  excludeMergeCommits: boolean
+) => {
+  return await invokeGitLog(
+    targetBranch,
+    COMMIT_DECORATIONS_PATTERN,
+    excludeMergeCommits
+  );
 };
 
 export const getGitLogInfo = async (targetBranch: string) => {
   const commitIds = (await getCommitIds(targetBranch)).split('\n');
-  const commitDates = (await getCommitDates(targetBranch)).split('\n');
+  const commitDates = (await getCommitDates(targetBranch, true)).split('\n');
   const commitMessages = (await getCommitMessages(targetBranch)).split('\n');
-  const commitDecorations = (await getCommitDecorations(targetBranch)).split(
+
+  const tagDates = (await getCommitDates(targetBranch, false)).split('\n');
+  const tagNames = (await getCommitDecorations(targetBranch, false)).split(
     '\n'
   );
 
-  const response: Commit[] = [];
+  const originalTags: Tag[] = tagNames.map((_, index) => ({
+    name: tagNames[index],
+    date: new Date(tagDates[index])
+  }));
+
+  const tags = originalTags
+    .filter((tag) => tag.name.includes('tag: '))
+    .map((rawTag) => ({
+      name: rawTag.name
+        .trim()
+        .matchAll(/\((.*)\)/g)
+        .next()
+        .value![1].split(',')
+        .filter((subTag) => subTag.includes('tag: '))[0]
+        .matchAll(/tag: (.*)/g)
+        .next().value![1],
+      date: rawTag.date
+    }))
+    .filter((tag) => new RegExp(defaultConfig.tagFilter).test(tag.name));
+
+  const response: GitLogInfo = {
+    commits: [],
+    tags: tags
+  };
 
   Array.from({ length: commitIds.length }).forEach((_, i) => {
     if (new RegExp('.*: .*').test(commitMessages[i])) {
-      response.push({
+      response.commits.push({
         id: commitIds[i],
         date: new Date(commitDates[i]),
         message: commitMessages[i]
           .matchAll(/.*:(.*)/g)
           .next()
           .value![1].trim(),
-        category: commitMessages[i].matchAll(/(.*):/g).next().value![1],
-        decorations: commitDecorations[i]
-          ? commitDecorations[i]
-              .matchAll(/\((.*)\)/g)
-              .next()
-              .value![1].split(',')
-              .filter((decoration) => decoration.includes('tag: '))
-              .map((decoration) =>
-                decoration
-                  .matchAll(/tag: (.*)/g)
-                  .next()
-                  .value![1].trim()
-              )
-          : []
+        category: commitMessages[i].matchAll(/(.*):/g).next().value![1]
       });
     }
   });

@@ -3,5 +3,4 @@ export interface Commit {
   date: Date;
   message: string;
   category: string;
-  decorations: string[];
 }

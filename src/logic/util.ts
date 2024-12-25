@@ -1,6 +1,8 @@
 import { defaultConfig } from '../config/NodeAutochglogConfig';
 import { Changelog } from '../model/Changelog';
 import { Commit } from '../model/Commit';
+import { GitLogInfo } from '../model/GitLogInfo';
+import { Tag } from '../model/Tag';
 
 export const organizeCommitsByCategory = (
   commits: Commit[]
@@ -15,23 +17,29 @@ export const organizeCommitsByCategory = (
 };
 
 export const organizeCommitsByTags = (
-  commits: Commit[]
+  gitLogInfo: GitLogInfo
 ): Record<string, Commit[]> => {
   const commitByTagsMap: Record<string, Commit[]> = {};
-  commits.sort((a, b) => {
+  gitLogInfo.commits.sort((a, b) => {
     return b.date > a.date ? -1 : +1;
   });
 
   let buffer: Commit[] = [];
-  for (const commit of commits) {
+  for (const commit of gitLogInfo.commits) {
+    //console.debug(`Processing commit: ${commit.message} (${commit.date})`);
     buffer.push(commit);
-    const relevantTags = commit.decorations.filter((d) =>
-      new RegExp(defaultConfig.tagFilter).test(d)
-    );
-    if (relevantTags.length > 0) {
-      for (const tag of relevantTags) {
-        (commitByTagsMap[tag] ||= []).push(...buffer);
-      }
+    const relevantTag = gitLogInfo.tags
+      .filter((tag) => {
+        return tag.date > commit.date;
+      })
+      .reduce(
+        (min, tag) => {
+          return !min || tag.date < min.date ? tag : min;
+        },
+        undefined as Tag | undefined
+      );
+    if (relevantTag) {
+      (commitByTagsMap[relevantTag.name] ||= []).push(...buffer);
       buffer = [];
     }
   }
@@ -44,13 +52,13 @@ export const organizeCommitsByTags = (
 };
 
 export const organizeCommitsByTagsAndCategories = (
-  commits: Commit[]
+  gitLogInfo: GitLogInfo
 ): Record<string, Record<string, Commit[]>> => {
   const commitsByTagsAndCategories: Record<
     string,
     Record<string, Commit[]>
   > = {};
-  const commitsByTags = organizeCommitsByTags(commits);
+  const commitsByTags = organizeCommitsByTags(gitLogInfo);
   for (const tag in commitsByTags) {
     commitsByTagsAndCategories[tag] = organizeCommitsByCategory(
       commitsByTags[tag]
@@ -61,7 +69,8 @@ export const organizeCommitsByTagsAndCategories = (
 };
 
 export const buildChangelogMetadata = (
-  commitsByTagsAndCategories: Record<string, Record<string, Commit[]>>
+  commitsByTagsAndCategories: Record<string, Record<string, Commit[]>>,
+  tags: Tag[]
 ): Changelog => {
   return {
     releases: Object.entries(commitsByTagsAndCategories)
@@ -82,11 +91,7 @@ export const buildChangelogMetadata = (
               .includes(category.key)
           ),
         date:
-          Object.values(categoriesMap)
-            .map((commits) =>
-              commits.filter((c) => c.decorations.includes(releaseName))
-            )
-            .flat(1)[0]?.date || new Date()
+          tags.filter((tag) => tag.name === releaseName)[0]?.date || new Date()
       }))
       .sort((rel1, rel2) => (rel1.date > rel2.date ? -1 : +1))
   };

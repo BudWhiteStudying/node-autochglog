@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+import 'source-map-support/register';
+
 import { defaultConfig } from './config/NodeAutochglogConfig';
 import { getGitLogInfo } from './logic/git-parser';
 import {
@@ -18,9 +20,13 @@ const main = async () => {
       defaultConfig.outputFilepath,
       Mustache.render(
         fs.readFileSync(defaultConfig.templateLocation, 'utf-8'),
-        buildChangelogMetadata(organizeCommitsByTagsAndCategories(gitLogInfo))
+        buildChangelogMetadata(
+          organizeCommitsByTagsAndCategories(gitLogInfo),
+          gitLogInfo.tags
+        )
       )
     );
+    console.info(`DONE! Output written to ${defaultConfig.outputFilepath}`);
   } catch (error) {
     try {
       const parsedError = error as { message: string };
