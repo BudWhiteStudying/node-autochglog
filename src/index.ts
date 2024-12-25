@@ -2,7 +2,6 @@
 
 import 'source-map-support/register';
 
-import { defaultConfig } from './config/NodeAutochglogConfig';
 import { getGitLogInfo } from './logic/git-parser';
 import {
   buildChangelogMetadata,
@@ -12,21 +11,25 @@ import { FALLBACK_ERROR_MESSAGE } from './messages';
 
 import fs from 'fs';
 import Mustache from 'mustache';
+import { getRuntimeConfig } from './config/configService';
 
 const main = async () => {
+  const config = getRuntimeConfig();
+
   try {
-    const gitLogInfo = await getGitLogInfo(defaultConfig.targetBranch);
+    const gitLogInfo = await getGitLogInfo(config);
     fs.writeFileSync(
-      defaultConfig.outputFilepath,
+      config.outputFilepath,
       Mustache.render(
-        fs.readFileSync(defaultConfig.templateLocation, 'utf-8'),
+        fs.readFileSync(config.templateLocation, 'utf-8'),
         buildChangelogMetadata(
-          organizeCommitsByTagsAndCategories(gitLogInfo),
-          gitLogInfo.tags
+          organizeCommitsByTagsAndCategories(gitLogInfo, config),
+          gitLogInfo.tags,
+          config
         )
       )
     );
-    console.info(`DONE! Output written to ${defaultConfig.outputFilepath}`);
+    console.info(`DONE! Output written to ${config.outputFilepath}`);
   } catch (error) {
     try {
       const parsedError = error as { message: string };

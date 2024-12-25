@@ -1,24 +1,24 @@
 import { join } from 'path';
+import { NodeAutoChglogConfig } from './NodeAutochglogConfig';
 
-export interface NodeAutoChglogConfig {
-  tagFilter: string;
-  initialTag: string;
-  templateLocation: string;
-  targetBranch: string;
-  outputFilepath: string;
-  allowedCategories: { key: string; label?: string }[];
-}
+let config: NodeAutoChglogConfig | null = null;
 
-export interface CustomNodeAutoChglogConfig {
-  tagFilter?: string;
-  initialTag?: string;
-  templateLocation?: string;
-  targetBranch?: string;
-  outputFilepath?: string;
-  allowedCategories?: { key: string; label?: string }[];
-}
+const getConfig: () => NodeAutoChglogConfig = () => {
+  if (config) {
+    return config;
+  } else {
+    // check for custom config
+    // merge it with the default config, if necessary
+    // return the config
+    return defaultConfig;
+  }
+};
 
-export const defaultConfig: NodeAutoChglogConfig = {
+export const getRuntimeConfig: () => NodeAutoChglogConfig = () => {
+  return getConfig();
+};
+
+const defaultConfig: NodeAutoChglogConfig = {
   tagFilter:
     '^\\d+\\.\\d+\\.\\d+(?:-[\\da-zA-Z\\-\\.]+)?(?:\\+[\\da-zA-Z\\-\\.]+)?$',
   initialTag: 'Unreleased',
