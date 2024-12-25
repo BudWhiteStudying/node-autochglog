@@ -1,9 +1,10 @@
 {
   "name": "node-autochglog",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Git changelog generator, to be used as a CLI utility in pre-commit hooks.",
   "main": "src/index.js",
   "bin": "dist/index.js",
+  "homepage": "https://github.com/BudWhiteStudying/node-autochglog",
   "scripts": {
     "build": "babel src --extensions '.ts,.tsx' --out-dir dist --copy-files",
     "type-check": "tsc --noEmit",
