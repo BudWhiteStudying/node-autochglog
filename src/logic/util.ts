@@ -31,7 +31,7 @@ export const organizeCommitsByTags = (
     buffer.push(commit);
     const relevantTag = gitLogInfo.tags
       .filter((tag) => {
-        return tag.date > commit.date;
+        return tag.date >= commit.date;
       })
       .reduce(
         (min, tag) => {
