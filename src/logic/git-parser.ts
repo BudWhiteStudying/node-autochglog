@@ -20,7 +20,7 @@ const invokeGitLog = async (
   let commandResult: { stdout: string; stderr: string };
   try {
     commandResult = await exec(
-      `git log --oneline ${excludeMergeCommits ? '--no-merges' : ''} --pretty=format:'${outputPattern}' ${targetBranch}`
+      `git log --oneline ${excludeMergeCommits ? '--no-merges' : ''} --pretty=format:"${outputPattern}" ${targetBranch}`
     );
     //console.debug(`Git log command result: ${commandResult.stdout}`)
   } catch (error: unknown) {
