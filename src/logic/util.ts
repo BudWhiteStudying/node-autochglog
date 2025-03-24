@@ -94,7 +94,8 @@ export const buildChangelogMetadata = (
               .includes(category.key)
           ),
         date:
-          tags.filter((tag) => tag.name === releaseName)[0]?.date || new Date()
+          tags.filter((tag) => tag.name === releaseName)[0]?.date || new Date(),
+        actualTag: releaseName != config.initialTag
       }))
       .sort((rel1, rel2) => (rel1.date > rel2.date ? -1 : +1))
   };
