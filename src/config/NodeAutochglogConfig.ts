@@ -17,6 +17,7 @@ export interface CustomNodeAutoChglogConfig {
   targetBranch?: string;
   outputFilepath?: string;
   allowedCategories?: { key: string; label?: string }[];
+  stripPRNumbers?: boolean;
 }
 
 export const defaultConfig: NodeAutoChglogConfig = {

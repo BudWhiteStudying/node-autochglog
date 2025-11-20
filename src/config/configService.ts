@@ -53,12 +53,13 @@ const defaultConfig: NodeAutoChglogConfig = {
       label: 'Refactoring'
     },
     {
-      key: 'chore',
-      label: 'Chores'
+      key: 'ci',
+      label: 'Integration'
     },
     {
       key: 'fix',
       label: 'Fixes'
     }
-  ]
+  ],
+  stripPRNumbers: false
 };
