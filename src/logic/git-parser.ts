@@ -67,9 +67,11 @@ export const getGitLogInfo = async (config: NodeAutoChglogConfig) => {
   const commitDates = (await getCommitDates(config.targetBranch, true)).split(
     '\n'
   );
-  const commitMessages = (await getCommitMessages(config.targetBranch)).split(
-    '\n'
-  );
+  const commitMessages = (await getCommitMessages(config.targetBranch))
+    .split('\n')
+    .map((message) =>
+      config.stripPRNumbers ? message.replace(/\s*\(#\d+\)\s*$/, '') : message
+    );
 
   const tagDates = (await getCommitDates(config.targetBranch, false)).split(
     '\n'

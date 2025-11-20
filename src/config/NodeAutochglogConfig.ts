@@ -7,6 +7,7 @@ export interface NodeAutoChglogConfig {
   targetBranch: string;
   outputFilepath: string;
   allowedCategories: { key: string; label?: string }[];
+  stripPRNumbers: boolean;
 }
 
 export interface CustomNodeAutoChglogConfig {
@@ -35,12 +36,13 @@ export const defaultConfig: NodeAutoChglogConfig = {
       label: 'Refactoring'
     },
     {
-      key: 'chore',
-      label: 'Chores'
+      key: 'ci',
+      label: 'Integration'
     },
     {
       key: 'fix',
       label: 'Fixes'
     }
-  ]
+  ],
+  stripPRNumbers: false
 };

@@ -87,6 +87,11 @@ export interface NodeAutoChglogConfig {
     <td>Project root</td>
   </tr>
   <tr>
+    <td><code>stripPRNumbers</code></td>
+    <td>Whether the tool should strip PR numbers from the end of commit messages</td>
+    <td><code>false</code></td>
+  </tr>
+  <tr>
     <td><code>allowedCategories</code></td>
     <td>List of key/label objects defining which commit prefixes (<code>key</code>) shall be considered as valid categories and which labels (<code>label</code>) shall be used in order to represent them; the <code>label</code> property is optional, if absent the <code>key</code> property will be used in its place.</td>
     <td>
@@ -100,8 +105,8 @@ export interface NodeAutoChglogConfig {
   "label": "Refactoring"
 },
 {
-  "key": "chore",
-  "label": "Chores"
+  "key": "ci",
+  "label": "Integration"
 },
 {
   "key": "fix",
